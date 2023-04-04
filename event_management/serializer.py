@@ -21,6 +21,7 @@ class AlbumSerializer(serializers.ModelSerializer):
     selectedCount = serializers.IntegerField(read_only=True)
     createdAt = serializers.DateField(read_only=True)
     pcloudFolderId = serializers.CharField(max_length=200, read_only=True)
+    thumb = serializers.SerializerMethodField('getThumb')
 
     def create(self, validated_data):
         response = createFolder(auth=self.context['auth'], path='albums/',
@@ -33,6 +34,11 @@ class AlbumSerializer(serializers.ModelSerializer):
         else:
             return serializers.ValidationError(
                 'pcloud Folder Not Yet Created', code=404)
+    
+    def getThumb(self, album):
+        firstImg = AlbumImage.objects.filter(album=album.id).first()
+        if firstImg:
+            return firstImg.thumb
 
 
 class AlbumImageSerializer(serializers.ModelSerializer):
@@ -48,6 +54,7 @@ class AlbumImageSerializer(serializers.ModelSerializer):
         validated_data['album'] = Album.objects.get(id=self.context['albumId'])
         return super().create(validated_data)
 
+    
 
 class CustomerListingSerializer(serializers.ModelSerializer):
     class Meta:

@@ -283,6 +283,7 @@ class AlbumAdmin(admin.ModelAdmin):
 class AlbumImageAdmin(admin.ModelAdmin):
     icon_name = 'art_track'
     list_display = ['album', 'imageId', 'Is_Selected']
+    list_per_page = 10
 
     def Is_Selected(self, image: models.AlbumImage):
         if image.is_selected == 1:

@@ -126,7 +126,6 @@ class Album(models.Model):
     pcloudFolderId = models.CharField(max_length=250)
     isUploaded = models.BooleanField(default=False)
     createdAt = models.DateField(auto_now_add=True)
-    thumb = models.URLField()
 
     def __str__(self) -> str:
         return self.event.title + ' - ' + self.title

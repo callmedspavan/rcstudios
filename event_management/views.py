@@ -3,6 +3,7 @@ from . serializer import AlbumSerializer, AlbumImageSerializer, EventSerializer
 from .filters import EventFilter
 from core.views import getAuth
 from django.db.models import Count, Q, Value, Sum
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -42,7 +43,7 @@ class albumViewSet(ModelViewSet):
         response = getAuth()
         if response:
             serializer = AlbumSerializer(
-                data=request.data, context={'auth': response, 'event_id': self.kwargs['event_id']})
+                data=request.data, context={'auth': response, 'event_id': self.kwargs['event_pk']})
             serializer.is_valid(raise_exception=True)
             serializer.save()
             data = {**serializer.data, 'auth': response}
@@ -51,16 +52,22 @@ class albumViewSet(ModelViewSet):
 
 
 class albumImage_list(APIView):
-    def get(self, request, event_pk, album_pk, *args):
-        queryset = AlbumImage.objects.filter(album=album_pk)
-        serializer = AlbumImageSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, album_pk, *args):
+        if get_object_or_404(Album, id=album_pk):
+            if self.request.GET.get('s'):
+                queryset = AlbumImage.objects.filter(album=album_pk, is_selected=self.request.GET.get('s'))
+            else:
+                queryset = AlbumImage.objects.filter(album=album_pk)
+            serializer = AlbumImageSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, event_pk, album_pk, *args):
+    def post(self, request, album_pk, *args):
         serializer = AlbumImageSerializer(
             data=request.data, many=True, context={'albumId': album_pk})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # ____________________ APIS FOR MOBILE APPLICATIONS _______________________________
+
+# ____________________ APIS FOR MOBILE APPLICATIONS _______________________________
+

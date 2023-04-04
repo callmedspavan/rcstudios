@@ -12,7 +12,6 @@ events_router.register('albums', views.albumViewSet, basename='event-album')
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(events_router.urls)),
+    path('albums/<int:album_pk>/images',
+         views.albumImage_list.as_view()),
 ]
-
-#    path('events/<int:event_pk>/albums/<int:album_pk>/images',
-#    views.albumImage_list.as_view()),

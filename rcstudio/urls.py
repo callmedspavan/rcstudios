@@ -28,11 +28,11 @@ admin.site.enable_nav_sidebar = True
 admin.site.site_title = 'Admin • RC Studio'
 admin.site.index_title = 'Welcome'
 admin.site.name = 'RC Studio'
-admin.site.site_url = '/admin'
+admin.site.site_url = ''
 
 urlpatterns = [
     path('studio/', include(event_management.urls)),
-    path('admin/', admin.site.urls),
+    path('', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('__debug__/', include(debug_toolbar.urls))
